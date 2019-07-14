@@ -33,11 +33,28 @@ exports.handler = async (event) => {
         const msg = {
             to: rec,
             from: 'noreply@initiative-interchange.org',
-            subject: 'Test',
-            text: 'and easy to do anywhere, even with Node.js',
-            html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+            templateId: process.env.USER_MAIL_TEMPLATE
         };
-        sgMail.send(msg).catch(function(err) {
+        await sgMail.send(msg)
+        .then(function(){
+            console.log('sent:', rec);
+        })
+        .catch(function(err) {
+            console.log('errors: ', err.response.body.errors);
+        });
+
+        const contactMsg = {
+            to: 'contact@initiative-interchange.org',
+            from: 'noreply@initiative-interchange.org',
+            templateId: process.env.USER_CONTACT_TEMPLATE,
+            dynamic_template_data: event
+        };
+
+        await sgMail.send(contactMsg)
+        .then(function(){
+            console.log('sent:', rec);
+        })
+        .catch(function(err) {
             console.log('errors: ', err.response.body.errors);
         });
     }
