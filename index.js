@@ -52,7 +52,7 @@ exports.handler = async (event) => {
 
         await sgMail.send(contactMsg)
         .then(function(){
-            console.log('sent:', rec);
+            console.log('sent:', 'contact@initiative-interchange.org');
         })
         .catch(function(err) {
             console.log('errors: ', err.response.body.errors);
