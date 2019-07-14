@@ -10,7 +10,7 @@ exports.handler = async (event) => {
     //Setup JavaScript Object Validation
     const Joi = require("@hapi/joi");
     const schema = Joi.object().keys({
-        club: Joi.string().alphanum().min(3).max(70).required(),
+        club: Joi.string().min(3).max(70).required(),
         country: Joi.string().length(2), //Alpha 2 country code
         club_mail: Joi.string().email(),
         club_presentation: Joi.string(),
@@ -23,14 +23,23 @@ exports.handler = async (event) => {
     if (result.error != null){
         response.statusCode = 500;
     }else{
+
+        let rec = [event.club_mail, event.contact_person_mail];
+
+        if (event.club_mail === event.contact_person_mail){
+            rec = event.club_mail;
+        }
+
         const msg = {
-            to: [event.club_mail, event.contact_person_mail],
+            to: rec,
             from: 'noreply@initiative-interchange.org',
             subject: 'Test',
             text: 'and easy to do anywhere, even with Node.js',
             html: '<strong>and easy to do anywhere, even with Node.js</strong>',
         };
-        sgMail.send(msg);
+        sgMail.send(msg).catch(function(err) {
+            console.log('errors: ', err.response.body.errors);
+        });
     }
 
     return response;
